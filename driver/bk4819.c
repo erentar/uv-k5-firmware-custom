@@ -536,6 +536,7 @@ void BK4819_SetTailDetection(const uint32_t freq_10Hz)
     BK4819_WriteRegister(BK4819_REG_07, BK4819_REG_07_MODE_CTC2 | ((253910 + (freq_10Hz / 2)) / freq_10Hz));  // with rounding
 }
 
+#ifdef ENABLE_VOX
 void BK4819_EnableVox(uint16_t VoxEnableThreshold, uint16_t VoxDisableThreshold)
 {
     //VOX Algorithm
@@ -557,6 +558,7 @@ void BK4819_EnableVox(uint16_t VoxEnableThreshold, uint16_t VoxDisableThreshold)
     // Enable VOX
     BK4819_WriteRegister(BK4819_REG_31, REG_31_Value | (1u << 2));    // VOX Enable
 }
+#endif
 
 void BK4819_SetFilterBandwidth(const BK4819_FilterBandwidth_t Bandwidth, const bool weak_no_different)
 {
@@ -845,6 +847,7 @@ void BK4819_DisableScramble(void)
     BK4819_WriteRegister(BK4819_REG_31, Value & ~(1u << 1));
 }
 
+#ifndef ENABLE_FEAT_F4HWN
 void BK4819_EnableScramble(uint8_t Type)
 {
     const uint16_t Value = BK4819_ReadRegister(BK4819_REG_31);
@@ -852,6 +855,7 @@ void BK4819_EnableScramble(uint8_t Type)
 
     BK4819_WriteRegister(BK4819_REG_71, 0x68DC + (Type * 1032));   // 0110 1000 1101 1100
 }
+#endif
 
 bool BK4819_CompanderEnabled(void)
 {
@@ -1633,6 +1637,7 @@ uint8_t BK4819_GetCTCType(void)
     return (BK4819_ReadRegister(BK4819_REG_0C) >> 10) & 3u;
 }
 
+#ifdef ENABLE_AIRCOPY
 void BK4819_SendFSKData(uint16_t *pData)
 {
     unsigned int i;
@@ -1680,6 +1685,7 @@ void BK4819_PrepareFSKReceive(void)
     // FSK SyncLength Selection
     BK4819_WriteRegister(BK4819_REG_59, 0x3068);
 }
+#endif
 
 static void BK4819_PlayRogerNormal(void)
 {
